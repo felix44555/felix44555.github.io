@@ -3,129 +3,93 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HCS Elektronik GMBH Darkmode – Kunstvolle One-Scroll Experience</title>
-  <!-- System-Font-Stack für macOS/iOS und Fallbacks -->
+  <title>HCS Elektronik GMBH – Mit neuen Effekten</title>
   <style>
-    /* ----------------------------------------
-       Variablen & Grundfarben (Darkmode)
-    ---------------------------------------- */
+    /*------------------------------------------------
+      0. Variablen & Basis
+    ------------------------------------------------*/
     :root {
-      --bg-dark:       #0a0a0a;
-      --bg-darker:     #050505;
-      --text-light:    #ececec;
-      --accent:        #1e90ff;    /* kühles Blau als Akzentfarbe */
-      --accent-hover:  #1c7ed6;
-      --overlay:       rgba(10, 10, 10, 0.6);
-      --section-padding: 6rem 0;
-      --transition:    0.3s ease-in-out;
+      --accent:            #0071e3;
+      --dark-bg:           #0e0e0e;
+      --light-bg:          #ffffff;
+      --text:              #111;
+      --radius:            12px;
+      --transition:        0.3s ease-in-out;
+      --logo-gradient:     linear-gradient(90deg, #0071e3, #00c6ff);
     }
-
-    /* ----------------------------------------
-       Wasserzeichen "HCS" im Hintergrund
-    ---------------------------------------- */
-    body::before {
-      content: "HCS";
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-30deg);
-      font-size: 20rem;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.05);
-      z-index: 0;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    /* ----------------------------------------
-       Reset & Basis
-    ---------------------------------------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    html, body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-light);
+    html {
       scroll-behavior: smooth;
-      line-height: 1.6;
-      min-width: 320px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+                   Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--light-bg);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      position: relative; /* Damit das Wasserzeichen hinter allem liegt */
+      /* Für flüssigeres Rendern auf Mobil und Desktop */
+      transform: translateZ(0);
     }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    ul { list-style: none; }
-
-    /* ----------------------------------------
-       Scrollbar-Styling (Darkmode)
-    ---------------------------------------- */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--bg-darker);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--accent);
-      border-radius: 5px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--accent-hover);
+    img {
+      max-width: 100%;
+      display: block;
     }
 
-    /* ----------------------------------------
-       Navbar (fixed, transparent-to-solid on scroll)
-    ---------------------------------------- */
+    /*------------------------------------------------
+      1. Navigation
+    ------------------------------------------------*/
     .navbar {
       position: fixed;
+      inset-inline: 0;
       top: 0;
-      left: 0;
-      width: 100%;
       z-index: 999;
-      padding: 1rem 0;
-      background: rgba(10, 10, 10, 0.3);
-      backdrop-filter: blur(8px);
-      transition: background var(--transition);
+      backdrop-filter: saturate(180%) blur(20px);
+      background: rgba(255, 255, 255, 0.72);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      transition: transform var(--transition), background var(--transition);
     }
-    .navbar.scrolled {
-      background: var(--bg-darker);
-    }
-    .navbar .container {
-      width: min(92%, 1200px);
-      margin: 0 auto;
+    .nav-flex {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 1rem 2rem;
     }
+    /* Logo: Gradient-Text und immer sichtbar */
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      color: var(--accent);
-      z-index: 1000;
+      background: var(--logo-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      z-index: 1002; /* garantiert über Mobile-Menu */
     }
-    .logo-highlight {
-      color: #f08ff0; /* leichter Hauch Magenta */
+    .logo-accent {
+      color: var(--accent);
     }
     .nav-menu {
       display: flex;
       gap: 2rem;
-      z-index: 1000;
+      list-style: none;
     }
     .nav-menu a {
       position: relative;
       font-weight: 500;
-      padding: 0.25rem 0;
+      color: var(--text);
+      text-decoration: none;
       transition: color var(--transition);
     }
     .nav-menu a::after {
       content: "";
       position: absolute;
-      left: 0; right: 0; bottom: -4px;
+      inset-inline: 0;
+      bottom: -6px;
       height: 2px;
       background: var(--accent);
       transform: scaleX(0);
@@ -143,315 +107,242 @@
       background: none;
       border: none;
       font-size: 1.6rem;
-      color: var(--text-light);
       cursor: pointer;
-      z-index: 1000;
+      z-index: 1001;
+      color: var(--text);
     }
-    @media (max-width: 768px) {
+    @media (max-width: 800px) {
+      .nav-toggle {
+        display: block;
+      }
       .nav-menu {
         position: fixed;
-        top: 0; right: 0;
+        inset: 0 auto auto 0;
+        width: 75vw;
         height: 100vh;
-        width: 70vw;
-        max-width: 300px;
-        background: var(--bg-darker);
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 2rem;
-        transform: translateX(100%);
-        transition: transform var(--transition) cubic-bezier(.4,0,.2,1);
+        gap: 1.6rem;
+        padding: 5rem 2rem 2rem 2rem;
+        background: var(--light-bg);
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1000;
       }
-      .nav-menu_visible {
+      .nav-menu.is-visible {
         transform: translateX(0);
       }
-      .nav-toggle { display: block; }
+      /* Logo immer oben links sichtbar */
+      .nav-flex {
+        padding: 1rem;
+      }
     }
 
-    /* ----------------------------------------
-       Sektionen (One-Scroll Konzept)
-    ---------------------------------------- */
-    section {
+    /*------------------------------------------------
+      2. Sektionen & Parallax
+    ------------------------------------------------*/
+    .section {
       position: relative;
-      width: 100%;
       min-height: 100vh;
       display: flex;
       align-items: center;
-      justify-content: center;
+      overflow: hidden;
+    }
+    .section.is-dark {
+      color: #fff;
+    }
+    .container {
+      width: min(92%, 1200px);
+      margin-inline: auto;
+    }
+    .narrow {
+      max-width: 660px;
+      margin-inline: auto;
       text-align: center;
-      padding: var(--section-padding);
-      z-index: 1; /* Damit die Inhalte über dem Wasserzeichen liegen */
     }
-    .section-hero {
-      background: url('images/hero-electronic.jpg') center/cover no-repeat fixed;
-      color: var(--text-light);
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
     }
-    .section-hero::before {
-      content: "";
+    /* Parallax-Bilder nun über data-Attribute steuerbar */
+    .parallax-bg {
       position: absolute;
       inset: 0;
-      background: var(--overlay);
-      z-index: 1;
+      width: 100%;
+      height: 110%; /* 110% für nahtlosen Scroll */
+      object-fit: cover;
+      will-change: transform;
     }
-    .hero-content {
-      position: relative;
-      max-width: 800px;
-      padding: 0 1rem;
-      animation: fadeInUp 1s ease-out forwards;
-      opacity: 0;
-      transform: translateY(30px);
-      z-index: 2;
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.78);
     }
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .section.is-dark .overlay {
+      background: rgba(0, 0, 0, 0.45);
     }
+    .scroll-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 2rem;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      animation: bounce 2s infinite;
+      color: #333;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+      40% { transform: translate(-50%, -8px); }
+      60% { transform: translate(-50%, -4px); }
+    }
+
+    /*------------------------------------------------
+      3. Inhalte
+    ------------------------------------------------*/
     .hero-content h1 {
-      font-size: clamp(2.5rem, 6vw, 5rem);
-      margin-bottom: 1rem;
-      line-height: 1.1;
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      letter-spacing: -0.02em;
     }
-    .hero-content p {
-      font-size: clamp(1.2rem, 3vw, 1.5rem);
-      margin-bottom: 2rem;
-      color: #cfcfcf;
+    .subtitle {
+      margin: 0.5rem 0 2rem;
+      font-size: 1.25rem;
+      opacity: 0.8;
+    }
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      text-align: center;
+      margin-bottom: 3rem;
     }
     .btn {
       display: inline-block;
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
+      padding: 0.85rem 2.25rem;
       border-radius: 40px;
-      transition: background-color var(--transition), color var(--transition);
+      font-weight: 500;
+      text-align: center;
+      transition: background 0.3s;
       cursor: pointer;
     }
     .btn-primary {
-      background-color: var(--accent);
+      background: var(--accent);
       color: #fff;
-      border: none;
     }
-    .btn-primary:hover {
-      background-color: var(--accent-hover);
-    }
-
-    /* ----------------------------------------
-       Features-Section
-    ---------------------------------------- */
-    .section-features {
-      background: var(--bg-darker);
-      color: var(--text-light);
-    }
-    .section-features h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
+    .btn-outline {
+      border: 1px solid var(--accent);
       color: var(--accent);
     }
+    .btn-primary:hover {
+      background: #005ccf;
+    }
+    .btn-outline:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    /* Fade-In Helferklasse */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Feature-Kacheln: interaktives Tilt auf Desktop, sanftes Scale auf Mobile */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 3rem;
-      margin-top: 2rem;
-      z-index: 2;
     }
     .feature-item {
-      background: #121212;
+      background: var(--light-bg);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-      text-align: center;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
       transition: transform var(--transition), box-shadow var(--transition);
+      /* Für Tilt-Effekt setzen wir perspective */
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      cursor: pointer;
     }
     .feature-item img {
-      width: 64px;
-      margin-bottom: 1.25rem;
-      filter: brightness(1.2);
-    }
-    .feature-item h3 {
-      margin-bottom: 1rem;
-      color: #fff;
-      font-size: 1.25rem;
-    }
-    .feature-item p {
-      color: #bbb;
-      font-size: 1rem;
-      line-height: 1.4;
+      width: 48px;
+      margin-bottom: 1.2rem;
     }
     .feature-item:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      /* Tilt-Effekt nur auf Nicht-Touch-Devices aktivieren */
+      .feature-item {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .feature-item.tilt-active {
+        transform: perspective(1000px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) scale(1.02);
+      }
     }
 
-    /* ----------------------------------------
-       Produkt-Sektionen (Parallax)
-    ---------------------------------------- */
-    .section-product {
-      position: relative;
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-      color: var(--text-light);
-    }
-    .section-product::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: var(--overlay);
-      z-index: 1;
-    }
-    .product-content {
-      position: relative;
-      max-width: 700px;
-      padding: 0 1rem;
-      animation: fadeInUp 1s ease-out forwards;
-      opacity: 0;
-      transform: translateY(30px);
-      z-index: 2;
-    }
-    .product-content h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    .product-content p {
-      font-size: 1.125rem;
-      margin-bottom: 1.5rem;
-      color: #d1d1d1;
-      line-height: 1.6;
-    }
-    .btn-outline {
-      background-color: transparent;
-      border: 2px solid var(--accent);
-      color: var(--accent);
-    }
-    .btn-outline:hover {
-      background-color: var(--accent);
-      color: #fff;
-    }
-
-    /* ----------------------------------------
-       Über uns (About)
-    ---------------------------------------- */
-    .section-about {
-      background: url('images/factory-bg.jpg') center/cover no-repeat fixed;
-      color: var(--text-light);
-    }
-    .section-about::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
-    .about-content {
-      position: relative;
-      max-width: 800px;
-      padding: 0 1rem;
-      font-size: 1.125rem;
-      line-height: 1.8;
-      animation: fadeInUp 1s ease-out forwards;
-      opacity: 0;
-      transform: translateY(30px);
-      z-index: 2;
-    }
-
-    /* ----------------------------------------
-       Kontakt-Sektion
-    ---------------------------------------- */
-    .section-contact {
-      background: var(--bg-darker);
-      color: var(--text-light);
-    }
-    .section-contact h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--accent);
-    }
+    /*------------------------------------------------
+      4. Formular & Footer
+    ------------------------------------------------*/
     .contact-form {
       max-width: 600px;
-      width: 100%;
-      margin: 0 auto 2rem auto;
+      margin-inline: auto;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      z-index: 2;
+      gap: 1.25rem;
     }
     .contact-form input,
     .contact-form textarea {
-      padding: 0.75rem;
-      border: 1px solid #333;
-      border-radius: 6px;
-      background: #1a1a1a;
-      color: var(--text-light);
+      padding: 0.9rem 1.1rem;
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      font-family: inherit;
       font-size: 1rem;
-      transition: border-color var(--transition);
-    }
-    .contact-form input:focus,
-    .contact-form textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    .contact-form button {
-      align-self: flex-start;
-      background-color: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: background-color var(--transition);
-    }
-    .contact-form button:hover {
-      background-color: var(--accent-hover);
     }
     .contact-info {
       text-align: center;
-      font-size: 1rem;
-      color: #bbb;
-      z-index: 2;
+      margin-top: 1.5rem;
     }
-
-    /* ----------------------------------------
-       Footer
-    ---------------------------------------- */
-    footer {
-      background: #050505;
-      color: #555;
+    .footer {
+      background: var(--dark-bg);
+      color: #ccc;
       padding: 2rem 0;
       text-align: center;
-      font-size: 0.9rem;
-      z-index: 1;
     }
-    footer p {
-      margin-bottom: 1rem;
-    }
-    .footer-icons {
+    .footer-flex {
       display: flex;
-      justify-content: center;
-      gap: 1.5rem;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
     }
-    .footer-icons img {
-      width: 28px;
-      filter: invert(70%);
-      transition: filter var(--transition);
+    .social-icons {
+      display: flex;
+      gap: 1.2rem;
     }
-    .footer-icons a:hover img {
-      filter: invert(40%);
+    .social-icons img {
+      width: 24px;
+      filter: invert(1);
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .social-icons img:hover {
+      opacity: 1;
     }
 
-    /* ----------------------------------------
-       Responsive Anpassungen
-    ---------------------------------------- */
+    /*------------------------------------------------
+      5. Mobile- und Desktop-spezifische Anpassungen
+    ------------------------------------------------*/
     @media (max-width: 992px) {
       .features-grid {
         grid-template-columns: 1fr;
-      }
-      .feature-item {
-        max-width: 90%;
-        margin: 0 auto;
       }
     }
     @media (max-width: 768px) {
@@ -461,18 +352,20 @@
       .hero-content p {
         font-size: 1.125rem;
       }
-      .product-content h2,
-      .about-content h2 {
-        font-size: 2rem;
+      .feature-item:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
       }
-      .nav-menu {
+      /* Parallax-Hintergrund auf Mobil deaktivieren (smoothes Scrolling) */
+      [data-parallax] {
+        transform: none !important;
+      }
+      /* Logo immer sichtbar machen */
+      .logo {
+        color: var(--accent);
+      }
+      .logo::before {
         display: none;
-      }
-      .nav-toggle {
-        display: block;
-      }
-      .nav-menu_visible {
-        display: flex;
       }
     }
     @media (max-width: 576px) {
@@ -482,18 +375,14 @@
       .hero-content p {
         font-size: 1rem;
       }
-      .section {
-        padding: 4rem 1rem;
-      }
     }
   </style>
 </head>
-
 <body>
   <!-- Navbar -->
-  <header class="navbar" id="navbar">
-    <div class="container">
-      <a href="#hero" class="logo">HCS <span class="logo-highlight">Elektronik GMBH</span></a>
+  <header class="navbar">
+    <div class="nav-flex">
+      <a href="#hero" class="logo">HCS <span class="logo-accent">Elektronik</span></a>
       <button class="nav-toggle" aria-label="Navigation umschalten">☰</button>
       <ul class="nav-menu">
         <li><a href="#hero">Home</a></li>
@@ -507,30 +396,34 @@
   </header>
 
   <!-- Hero-Sektion -->
-  <section id="hero" class="section section-hero">
-    <div class="hero-content">
-      <h1>HCS Elektronik GMBH</h1>
-      <p>Entwurf &amp; Akquise von Lösungen für Kabel, Systeme, Platinen und SMD</p>
-      <a href="#features" class="btn btn-primary">Unsere Stärken</a>
+  <section id="hero" class="section" data-parallax="0.3">
+    <img src="images/hero-electronic.jpg" alt="" class="parallax-bg" data-parallax="0.5">
+    <div class="overlay fade-in">
+      <div class="narrow hero-content">
+        <h1>HCS Elektronik GMBH</h1>
+        <p class="subtitle">Entwurf &amp; Akquise von Lösungen für Kabel, Systeme, Platinen und SMD</p>
+        <a href="#features" class="btn btn-primary">Unsere Stärken</a>
+      </div>
     </div>
+    <div class="scroll-hint">⌄ Scroll weiter</div>
   </section>
 
   <!-- Features-Sektion -->
-  <section id="features" class="section section-features">
+  <section id="features" class="section section-features fade-in">
     <div class="container">
-      <h2>Unsere Stärken</h2>
+      <h2 class="section-title">Unsere Stärken</h2>
       <div class="features-grid">
-        <div class="feature-item">
+        <div class="feature-item" data-tilt>
           <img src="images/icon-praezision.png" alt="Präzision Icon">
           <h3>Präzision &amp; Genauigkeit</h3>
           <p>Spulenwickelmaschine mit ±2 % Toleranz für höchste Präzision.</p>
         </div>
-        <div class="feature-item">
+        <div class="feature-item" data-tilt>
           <img src="images/icon-smd.png" alt="SMD Bestückung Icon">
           <h3>Halbautomatische SMD-Bestückung</h3>
           <p>Flexibler Fertigungsbereich mit Reflow-Lötofen für komplexe SMT-Layouts.</p>
         </div>
-        <div class="feature-item">
+        <div class="feature-item" data-tilt>
           <img src="images/icon-kabel.png" alt="Kabelsysteme Icon">
           <h3>Kabel &amp; Systemlösungen</h3>
           <p>Maßgeschneiderte Kabelbäume und Platinen für industrielle Anwendungen.</p>
@@ -540,36 +433,45 @@
   </section>
 
   <!-- Produkt 1: Halbautomatische SMD-Bestückung -->
-  <section id="product1" class="section section-product" style="background-image: url('images/smd-bg.jpg');">
-    <div class="product-content">
-      <h2>Halbautomatische SMD-Bestückung</h2>
-      <p>Leistungsfähige Pick-&amp;Place-Anlage kombiniert mit einem Reflow-Ofen für verlässliche Lötprozesse. Perfekt für Prototypen und Kleinserien.</p>
-      <a href="#" class="btn btn-outline">Mehr Details</a>
+  <section id="product1" class="section section-product fade-in" data-parallax="0.4">
+    <img src="images/smd-bg.jpg" alt="" class="parallax-bg" data-parallax="0.4">
+    <div class="overlay">
+      <div class="narrow product-content">
+        <h2>Halbautomatische SMD-Bestückung</h2>
+        <p>Leistungsfähige Pick-&amp; Place-Anlage kombiniert mit einem Reflow-Ofen für verlässliche Lötprozesse. Perfekt für Prototypen und Kleinserien.</p>
+        <a href="#" class="btn btn-outline">Mehr Details</a>
+      </div>
     </div>
   </section>
 
   <!-- Produkt 2: Spulenwickelmaschine -->
-  <section id="product2" class="section section-product" style="background-image: url('images/wickelmaschine-bg.jpg');">
-    <div class="product-content">
-      <h2>Spulenwickelmaschine</h2>
-      <p>Automatisierte Wickelmaschine mit 2 % Genauigkeit – ideal für Induktoren, Transformatoren und kundenspezifische Spulen.</p>
-      <a href="#" class="btn btn-outline">Mehr Details</a>
+  <section id="product2" class="section section-product fade-in" data-parallax="0.4">
+    <img src="images/wickelmaschine-bg.jpg" alt="" class="parallax-bg" data-parallax="0.4">
+    <div class="overlay">
+      <div class="narrow product-content">
+        <h2>Spulenwickelmaschine</h2>
+        <p>Automatisierte Wickelmaschine mit 2 % Genauigkeit – ideal für Induktoren, Transformatoren und kundenspezifische Spulen.</p>
+        <a href="#" class="btn btn-outline">Mehr Details</a>
+      </div>
     </div>
   </section>
 
   <!-- Über uns -->
-  <section id="about" class="section section-about">
-    <div class="about-content">
-      <h2>Über uns</h2>
-      <p>HCS Elektronik GMBH wurde von Herbert Christian Skupin gegründet. Wir entwerfen und akquirieren Lösungen für Unternehmen in den Bereichen Kabelsysteme, Platinen und SMD-Bestückung. Unsere halbautomatische SMD-Bestückung mit Reflow-Lötofen sowie unsere hochpräzise Spulenwickelmaschine (±2 %) ermöglichen passgenaue Fertigungslösungen. Ein aufgewecktes, studentisches Fertigungsteam bringt frischen Ideenreichtum und Umsetzungsstärke in jedes Projekt.</p>
+  <section id="about" class="section section-is-dark fade-in" data-parallax="0.2">
+    <img src="images/factory-bg.jpg" alt="" class="parallax-bg" data-parallax="0.2">
+    <div class="overlay">
+      <div class="narrow about-content">
+        <h2>Über uns</h2>
+        <p>HCS Elektronik GMBH wurde von Herbert Christian Skupin gegründet. Wir entwerfen und akquirieren Lösungen für Unternehmen in den Bereichen Kabelsysteme, Platinen und SMD-Bestückung. Unsere halbautomatische SMD-Bestückung mit Reflow-Lötofen sowie unsere hochpräzise Spulenwickelmaschine (± 2 %) ermöglichen passgenaue Fertigungslösungen. Ein dynamisches, studentisches Fertigungsteam bringt frischen Ideenreichtum und Umsetzungsstärke in jedes Projekt.</p>
+      </div>
     </div>
   </section>
 
   <!-- Kontakt -->
-  <section id="contact" class="section section-contact">
+  <section id="contact" class="section section-features fade-in">
     <div class="container">
-      <h2>Kontakt</h2>
-      <form class="contact-form" action="#" method="post">
+      <h2 class="section-title">Kontakt</h2>
+      <form class="contact-form">
         <div class="form-group">
           <label for="name" class="sr-only">Name</label>
           <input type="text" id="name" name="name" placeholder="Name" required />
@@ -582,68 +484,86 @@
           <label for="message" class="sr-only">Nachricht</label>
           <textarea id="message" name="message" rows="5" placeholder="Nachricht" required></textarea>
         </div>
-        <button type="submit">Absenden</button>
+        <button type="submit" class="btn btn-primary">Absenden</button>
       </form>
       <p class="contact-info">Telefon: <strong>+49 30 1234567</strong></p>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 HCS Elektronik GMBH</p>
-    <div class="footer-icons">
-      <a href="#" aria-label="Facebook"><img src="images/facebook-icon.png" alt="Facebook"></a>
-      <a href="#" aria-label="LinkedIn"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
+  <footer class="footer">
+    <div class="footer-flex">
+      <p>&copy; 2025 HCS Elektronik GMBH</p>
+      <div class="social-icons">
+        <a href="#" aria-label="Facebook"><img src="images/facebook-icon.png" alt="Facebook" /></a>
+        <a href="#" aria-label="LinkedIn"><img src="images/linkedin-icon.png" alt="LinkedIn" /></a>
+      </div>
     </div>
   </footer>
 
-  <!-- JavaScript -->
   <script>
-    // Mobile-Navigation
+    /*------------------------------------------------
+      1. Mobile-Navigation
+    ------------------------------------------------*/
     const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    navToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('nav-menu_visible');
-    });
+    const navMenu   = document.querySelector('.nav-menu');
+    navToggle?.addEventListener('click', () => navMenu.classList.toggle('is-visible'));
 
-    // Navbar Hintergrundwechsel bei Scroll
-    const navbar = document.getElementById('navbar');
+    /*------------------------------------------------
+      2. Parallax-Effekt (CSS-Transform statt Background-Position)
+    ------------------------------------------------*/
+    const parallaxItems = document.querySelectorAll('[data-parallax]');
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 20) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    });
-
-    // Parallax-Scroll-Effekt
-    window.addEventListener('scroll', function () {
-      const scrolled = window.pageYOffset;
-      document.querySelectorAll('.section-product, .section-hero, .section-about').forEach(function (el) {
-        let rate = scrolled * 0.4;
-        if (el.id === 'hero') rate = scrolled * 0.5;
-        el.style.backgroundPosition = `center ${-rate}px`;
+      const scrolled = window.scrollY;
+      parallaxItems.forEach(el => {
+        const speed = parseFloat(el.dataset.parallax) || 0.3;
+        el.style.transform = `translateY(${scrolled * speed}px)`;
       });
     });
 
-    // Intersection Observer für Animationen
-    const observerOptions = {
-      threshold: 0.2
-    };
-    const revealOnScroll = new IntersectionObserver((entries, observer) => {
+    /*------------------------------------------------
+      3. Fade-Ins via Intersection Observer
+    ------------------------------------------------*/
+    const faders = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.hero-content, .product-content, .about-content').forEach(el => {
-            el.style.opacity = 1;
-            el.style.transform = 'translateY(0)';
-          });
-          observer.unobserve(entry.target);
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
         }
       });
-    }, observerOptions);
+    }, { threshold: 0.15 });
+    faders.forEach(el => observer.observe(el));
 
-    document.querySelectorAll('.section-hero, .section-product, .section-about').forEach(section => {
-      revealOnScroll.observe(section);
+    /*------------------------------------------------
+      4. Nav-Hide on Scroll down (Apple-Feeling)
+    ------------------------------------------------*/
+    let lastPos = 0;
+    const header = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+      const curr = window.scrollY;
+      header.style.transform =
+        (curr > lastPos && curr > 200) ? 'translateY(-100%)' : 'translateY(0)';
+      lastPos = curr;
+    });
+
+    /*------------------------------------------------
+      5. Tilt-Effekt für Feature-Items (Desktop)
+    ------------------------------------------------*/
+    document.querySelectorAll('[data-tilt]').forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const tiltX = (y - 0.5) * -15; // Neigung um X
+        const tiltY = (x - 0.5) * 15;  // Neigung um Y
+        el.style.setProperty('--tiltX', `${tiltX}deg`);
+        el.style.setProperty('--tiltY', `${tiltY}deg`);
+        el.classList.add('tilt-active');
+      });
+      el.addEventListener('mouseleave', () => {
+        el.classList.remove('tilt-active');
+      });
     });
   </script>
 </body>
