@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HCS Elektronik GMBH Darkmode – Kunstvolle One-Scroll Experience</title>
+  <!-- System-Font-Stack für macOS/iOS und Fallbacks -->
+  <style>
+    /* ----------------------------------------
+       Variablen & Grundfarben (Darkmode)
+    ---------------------------------------- */
+    :root {
+      --bg-dark:       #0a0a0a;
+      --bg-darker:     #050505;
+      --text-light:    #ececec;
+      --accent:        #1e90ff;    /* kühles Blau als Akzentfarbe */
+      --accent-hover:  #1c7ed6;
+      --overlay:       rgba(10, 10, 10, 0.6);
+      --section-padding: 6rem 0;
+      --transition:    0.3s ease-in-out;
+    }
+
+    /* ----------------------------------------
+       Wasserzeichen "HCS" im Hintergrund
+    ---------------------------------------- */
+    body::before {
+      content: "HCS";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 20rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.05);
+      z-index: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* ----------------------------------------
+       Reset & Basis
+    ---------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      scroll-behavior: smooth;
+      line-height: 1.6;
+      min-width: 320px;
+      overflow-x: hidden;
+      position: relative; /* Damit das Wasserzeichen hinter allem liegt */
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    ul { list-style: none; }
+
+    /* ----------------------------------------
+       Scrollbar-Styling (Darkmode)
+    ---------------------------------------- */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-hover);
+    }
+
+    /* ----------------------------------------
+       Navbar (fixed, transparent-to-solid on scroll)
+    ---------------------------------------- */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+      padding: 1rem 0;
+      background: rgba(10, 10, 10, 0.3);
+      backdrop-filter: blur(8px);
+      transition: background var(--transition);
+    }
+    .navbar.scrolled {
+      background: var(--bg-darker);
+    }
+    .navbar .container {
+      width: min(92%, 1200px);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      z-index: 1000;
+    }
+    .logo-highlight {
+      color: #f08ff0; /* leichter Hauch Magenta */
+    }
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      z-index: 1000;
+    }
+    .nav-menu a {
+      position: relative;
+      font-weight: 500;
+      padding: 0.25rem 0;
+      transition: color var(--transition);
+    }
+    .nav-menu a::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -4px;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+    .nav-menu a:hover {
+      color: var(--accent);
+    }
+    .nav-menu a:hover::after {
+      transform: scaleX(1);
+    }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--text-light);
+      cursor: pointer;
+      z-index: 1000;
+    }
+    @media (max-width: 768px) {
+      .nav-menu {
+        position: fixed;
+        top: 0; right: 0;
+        height: 100vh;
+        width: 70vw;
+        max-width: 300px;
+        background: var(--bg-darker);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        transform: translateX(100%);
+        transition: transform var(--transition) cubic-bezier(.4,0,.2,1);
+        z-index: 1000;
+      }
+      .nav-menu_visible {
+        transform: translateX(0);
+      }
+      .nav-toggle { display: block; }
+    }
+
+    /* ----------------------------------------
+       Sektionen (One-Scroll Konzept)
+    ---------------------------------------- */
+    section {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--section-padding);
+      z-index: 1; /* Damit die Inhalte über dem Wasserzeichen liegen */
+    }
+    .section-hero {
+      background: url('images/hero-electronic.jpg') center/cover no-repeat fixed;
+      color: var(--text-light);
+    }
+    .section-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--overlay);
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      max-width: 800px;
+      padding: 0 1rem;
+      animation: fadeInUp 1s ease-out forwards;
+      opacity: 0;
+      transform: translateY(30px);
+      z-index: 2;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .hero-content h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+    .hero-content p {
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      margin-bottom: 2rem;
+      color: #cfcfcf;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 40px;
+      transition: background-color var(--transition), color var(--transition);
+      cursor: pointer;
+    }
+    .btn-primary {
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* ----------------------------------------
+       Features-Section
+    ---------------------------------------- */
+    .section-features {
+      background: var(--bg-darker);
+      color: var(--text-light);
+    }
+    .section-features h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 3rem;
+      margin-top: 2rem;
+      z-index: 2;
+    }
+    .feature-item {
+      background: #121212;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .feature-item img {
+      width: 64px;
+      margin-bottom: 1.25rem;
+      filter: brightness(1.2);
+    }
+    .feature-item h3 {
+      margin-bottom: 1rem;
+      color: #fff;
+      font-size: 1.25rem;
+    }
+    .feature-item p {
+      color: #bbb;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    .feature-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
+    }
+
+    /* ----------------------------------------
+       Produkt-Sektionen (Parallax)
+    ---------------------------------------- */
+    .section-product {
+      position: relative;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      color: var(--text-light);
+    }
+    .section-product::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--overlay);
+      z-index: 1;
+    }
+    .product-content {
+      position: relative;
+      max-width: 700px;
+      padding: 0 1rem;
+      animation: fadeInUp 1s ease-out forwards;
+      opacity: 0;
+      transform: translateY(30px);
+      z-index: 2;
+    }
+    .product-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .product-content p {
+      font-size: 1.125rem;
+      margin-bottom: 1.5rem;
+      color: #d1d1d1;
+      line-height: 1.6;
+    }
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+    }
+    .btn-outline:hover {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ----------------------------------------
+       Über uns (About)
+    ---------------------------------------- */
+    .section-about {
+      background: url('images/factory-bg.jpg') center/cover no-repeat fixed;
+      color: var(--text-light);
+    }
+    .section-about::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
+    .about-content {
+      position: relative;
+      max-width: 800px;
+      padding: 0 1rem;
+      font-size: 1.125rem;
+      line-height: 1.8;
+      animation: fadeInUp 1s ease-out forwards;
+      opacity: 0;
+      transform: translateY(30px);
+      z-index: 2;
+    }
+
+    /* ----------------------------------------
+       Kontakt-Sektion
+    ---------------------------------------- */
+    .section-contact {
+      background: var(--bg-darker);
+      color: var(--text-light);
+    }
+    .section-contact h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+    .contact-form {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto 2rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      z-index: 2;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      padding: 0.75rem;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background: #1a1a1a;
+      color: var(--text-light);
+      font-size: 1rem;
+      transition: border-color var(--transition);
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .contact-form button {
+      align-self: flex-start;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+    .contact-form button:hover {
+      background-color: var(--accent-hover);
+    }
+    .contact-info {
+      text-align: center;
+      font-size: 1rem;
+      color: #bbb;
+      z-index: 2;
+    }
+
+    /* ----------------------------------------
+       Footer
+    ---------------------------------------- */
+    footer {
+      background: #050505;
+      color: #555;
+      padding: 2rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      z-index: 1;
+    }
+    footer p {
+      margin-bottom: 1rem;
+    }
+    .footer-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .footer-icons img {
+      width: 28px;
+      filter: invert(70%);
+      transition: filter var(--transition);
+    }
+    .footer-icons a:hover img {
+      filter: invert(40%);
+    }
+
+    /* ----------------------------------------
+       Responsive Anpassungen
+    ---------------------------------------- */
+    @media (max-width: 992px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .feature-item {
+        max-width: 90%;
+        margin: 0 auto;
+      }
+    }
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 2.5rem;
+      }
+      .hero-content p {
+        font-size: 1.125rem;
+      }
+      .product-content h2,
+      .about-content h2 {
+        font-size: 2rem;
+      }
+      .nav-menu {
+        display: none;
+      }
+      .nav-toggle {
+        display: block;
+      }
+      .nav-menu_visible {
+        display: flex;
+      }
+    }
+    @media (max-width: 576px) {
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+      .hero-content p {
+        font-size: 1rem;
+      }
+      .section {
+        padding: 4rem 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header class="navbar" id="navbar">
+    <div class="container">
+      <a href="#hero" class="logo">HCS <span class="logo-highlight">Elektronik GMBH</span></a>
+      <button class="nav-toggle" aria-label="Navigation umschalten">☰</button>
+      <ul class="nav-menu">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#features">Stärken</a></li>
+        <li><a href="#product1">SMD-Bestückung</a></li>
+        <li><a href="#product2">Spulenwicklung</a></li>
+        <li><a href="#about">Über uns</a></li>
+        <li><a href="#contact">Kontakt</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero-Sektion -->
+  <section id="hero" class="section section-hero">
+    <div class="hero-content">
+      <h1>HCS Elektronik GMBH</h1>
+      <p>Entwurf &amp; Akquise von Lösungen für Kabel, Systeme, Platinen und SMD</p>
+      <a href="#features" class="btn btn-primary">Unsere Stärken</a>
+    </div>
+  </section>
+
+  <!-- Features-Sektion -->
+  <section id="features" class="section section-features">
+    <div class="container">
+      <h2>Unsere Stärken</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <img src="images/icon-praezision.png" alt="Präzision Icon">
+          <h3>Präzision &amp; Genauigkeit</h3>
+          <p>Spulenwickelmaschine mit ±2 % Toleranz für höchste Präzision.</p>
+        </div>
+        <div class="feature-item">
+          <img src="images/icon-smd.png" alt="SMD Bestückung Icon">
+          <h3>Halbautomatische SMD-Bestückung</h3>
+          <p>Flexibler Fertigungsbereich mit Reflow-Lötofen für komplexe SMT-Layouts.</p>
+        </div>
+        <div class="feature-item">
+          <img src="images/icon-kabel.png" alt="Kabelsysteme Icon">
+          <h3>Kabel &amp; Systemlösungen</h3>
+          <p>Maßgeschneiderte Kabelbäume und Platinen für industrielle Anwendungen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Produkt 1: Halbautomatische SMD-Bestückung -->
+  <section id="product1" class="section section-product" style="background-image: url('images/smd-bg.jpg');">
+    <div class="product-content">
+      <h2>Halbautomatische SMD-Bestückung</h2>
+      <p>Leistungsfähige Pick-&amp;Place-Anlage kombiniert mit einem Reflow-Ofen für verlässliche Lötprozesse. Perfekt für Prototypen und Kleinserien.</p>
+      <a href="#" class="btn btn-outline">Mehr Details</a>
+    </div>
+  </section>
+
+  <!-- Produkt 2: Spulenwickelmaschine -->
+  <section id="product2" class="section section-product" style="background-image: url('images/wickelmaschine-bg.jpg');">
+    <div class="product-content">
+      <h2>Spulenwickelmaschine</h2>
+      <p>Automatisierte Wickelmaschine mit 2 % Genauigkeit – ideal für Induktoren, Transformatoren und kundenspezifische Spulen.</p>
+      <a href="#" class="btn btn-outline">Mehr Details</a>
+    </div>
+  </section>
+
+  <!-- Über uns -->
+  <section id="about" class="section section-about">
+    <div class="about-content">
+      <h2>Über uns</h2>
+      <p>HCS Elektronik GMBH wurde von Herbert Christian Skupin gegründet. Wir entwerfen und akquirieren Lösungen für Unternehmen in den Bereichen Kabelsysteme, Platinen und SMD-Bestückung. Unsere halbautomatische SMD-Bestückung mit Reflow-Lötofen sowie unsere hochpräzise Spulenwickelmaschine (±2 %) ermöglichen passgenaue Fertigungslösungen. Ein aufgewecktes, studentisches Fertigungsteam bringt frischen Ideenreichtum und Umsetzungsstärke in jedes Projekt.</p>
+    </div>
+  </section>
+
+  <!-- Kontakt -->
+  <section id="contact" class="section section-contact">
+    <div class="container">
+      <h2>Kontakt</h2>
+      <form class="contact-form" action="#" method="post">
+        <div class="form-group">
+          <label for="name" class="sr-only">Name</label>
+          <input type="text" id="name" name="name" placeholder="Name" required />
+        </div>
+        <div class="form-group">
+          <label for="email" class="sr-only">E-Mail</label>
+          <input type="email" id="email" name="email" placeholder="E-Mail" required />
+        </div>
+        <div class="form-group">
+          <label for="message" class="sr-only">Nachricht</label>
+          <textarea id="message" name="message" rows="5" placeholder="Nachricht" required></textarea>
+        </div>
+        <button type="submit">Absenden</button>
+      </form>
+      <p class="contact-info">Telefon: <strong>+49 30 1234567</strong></p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 HCS Elektronik GMBH</p>
+    <div class="footer-icons">
+      <a href="#" aria-label="Facebook"><img src="images/facebook-icon.png" alt="Facebook"></a>
+      <a href="#" aria-label="LinkedIn"><img src="images/linkedin-icon.png" alt="LinkedIn"></a>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Mobile-Navigation
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    navToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('nav-menu_visible');
+    });
+
+    // Navbar Hintergrundwechsel bei Scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Parallax-Scroll-Effekt
+    window.addEventListener('scroll', function () {
+      const scrolled = window.pageYOffset;
+      document.querySelectorAll('.section-product, .section-hero, .section-about').forEach(function (el) {
+        let rate = scrolled * 0.4;
+        if (el.id === 'hero') rate = scrolled * 0.5;
+        el.style.backgroundPosition = `center ${-rate}px`;
+      });
+    });
+
+    // Intersection Observer für Animationen
+    const observerOptions = {
+      threshold: 0.2
+    };
+    const revealOnScroll = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.hero-content, .product-content, .about-content').forEach(el => {
+            el.style.opacity = 1;
+            el.style.transform = 'translateY(0)';
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.section-hero, .section-product, .section-about').forEach(section => {
+      revealOnScroll.observe(section);
+    });
+  </script>
+</body>
+</html>
